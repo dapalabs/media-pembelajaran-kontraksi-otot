@@ -213,7 +213,6 @@
 
     .svg-container {
       background: #ffffff;
-      border: 1px solid var(--border);
       border-radius: 10px;
       padding: 1rem;
       display: flex;
@@ -321,7 +320,7 @@
       font-weight: 600;
     }
 
-    .explanation-box {
+    .explanation-bovèÇ
       margin-top: 0.75rem;
       padding: 0.75rem;
       background: #f1f5f9;
@@ -685,4 +684,159 @@
           "Tendon"
         ],
         answer: 0,
-        exp
+        explanation: "Miofibril terbagi menjadi segmen-segmen unit fungsional yang disebut sarkomer, dibatasi oleh Garis Z."
+      },
+      {
+        question: "4. Ion apa yang dilepaskan ketika impuls saraf mencapai serat otot?",
+        options: [
+          "Ion Natrium (Na+)",
+          "Ion Kalium (K+)",
+          "Ion Kalsium (Ca2+)",
+          "Ion Klorida (Cl-)"
+        ],
+        answer: 2,
+        explanation: "Impuls saraf memicu pelepasan ion kalsium (Ca2+) yang kemudian memicu langkah awal proses kontraksi."
+      },
+      {
+        question: "5. Apa fungsi ion kalsium (Ca2+) saat berikatan dengan troponin?",
+        options: [
+          "Memecah glukosa menjadi energi secara anaerob",
+          "Mengubah bentuk troponin sehingga tropomiosin bergeser membuka area pengikatan miosin",
+          "Menghancurkan jembatan silang secara permanen",
+          "Memperpanjang filamen miosin secara fisik"
+        ],
+        answer: 1,
+        explanation: "Ikatan kalsium pada troponin mengubah konformasi protein tersebut, menyebabkan tropomiosin bergeser sehingga myosin binding sites pada aktin terbuka."
+      },
+      {
+        question: "6. Istilah untuk ikatan fisik antara kepala miosin dengan aktin adalah...",
+        options: [
+          "Power stroke",
+          "Cross-bridge (jembatan silang)",
+          "Sarkolema",
+          "Garis M"
+        ],
+        answer: 1,
+        explanation: "Penempelan kepala miosin ke filamen aktin yang terbuka dinamakan cross-bridge (jembatan silang)."
+      },
+      {
+        question: "7. Bagaimana ATP menggerakkan kepala miosin ke posisi siap/berenergi tinggi?",
+        options: [
+          "ATP dihidrolisis menjadi ADP dan fosfat, melepaskan energi untuk mengokang kepala miosin",
+          "ATP langsung membakar filamen aktin",
+          "ATP mengikat kalsium agar tidak kembali ke retikulum",
+          "ATP menonaktifkan troponin secara kimiawi"
+        ],
+        answer: 0,
+        explanation: "Hidrolisis ATP menjadi ADP dan gugus fosfat melepaskan energi yang mengubah orientasi kepala miosin menjadi konfigurasi berenergi tinggi (seperti ketapel terkokang)."
+      },
+      {
+        question: "8. Mengapa mekanisme kerja otot disebut 'Sliding Filament Model'?",
+        options: [
+          "Karena tulang bergeser menjauhi persendian",
+          "Karena filamen aktin dan miosin saling memendek ukurannya",
+          "Karena filamen aktin bergeser melewati miosin tanpa pemendekan panjang filamen itu sendiri",
+          "Karena otot meluncur bebas di dalam rongga tubuh"
+        ],
+        answer: 2,
+        explanation: "Disebut model geseran filamen karena filamen aktin dan miosin saling bergeser melewati satu sama lain sehingga sarkomer memendek, tanpa pemendekan fisik pada panjang filamen protein itu sendiri."
+      }
+    ];
+
+    let userAnswers = {};
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+
+      quizQuestions.forEach((q, qIdx) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'quiz-question';
+
+        const title = document.createElement('h4');
+        title.textContent = q.question;
+        qDiv.appendChild(title);
+
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'quiz-options';
+
+        q.options.forEach((opt, optIdx) => {
+          const btn = document.createElement('button');
+          btn.className = 'quiz-option';
+          btn.textContent = opt;
+          btn.onclick = () => selectOption(qIdx, optIdx, qDiv);
+          optionsDiv.appendChild(btn);
+        });
+
+        qDiv.appendChild(optionsDiv);
+
+        const expDiv = document.createElement('div');
+        expDiv.id = `exp-${qIdx}`;
+        expDiv.className = 'explanation-box';
+        expDiv.innerHTML = `<strong>Pembahasan:</strong> ${q.explanation}`;
+        qDiv.appendChild(expDiv);
+
+        container.appendChild(qDiv);
+      });
+    }
+
+    function selectOption(qIdx, selectedIdx, questionDiv) {
+      if (userAnswers[qIdx] !== undefined) return;
+      userAnswers[qIdx] = selectedIdx;
+
+      const buttons = questionDiv.querySelectorAll('.quiz-option');
+      const correctIdx = quizQuestions[qIdx].answer;
+
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === correctIdx) {
+          btn.classList.add('correct');
+        } else if (idx === selectedIdx) {
+          btn.classList.add('incorrect');
+        }
+      });
+
+      document.getElementById(`exp-${qIdx}`).style.display = 'block';
+
+      if (Object.keys(userAnswers).length === quizQuestions.length) {
+        showFinalScore();
+      }
+    }
+
+    function showFinalScore() {
+      let score = 0;
+      quizQuestions.forEach((q, idx) => {
+        if (userAnswers[idx] === q.answer) score++;
+      });
+
+      const banner = document.getElementById('scoreBanner');
+      const title = document.getElementById('scoreTitle');
+      const feedback = document.getElementById('scoreFeedback');
+
+      banner.style.display = 'block';
+      title.textContent = `Skor Akhir: ${score} dari ${quizQuestions.length} (${Math.round((score / quizQuestions.length) * 100)}%)`;
+
+      if (score === quizQuestions.length) {
+        feedback.textContent = 'Pemahaman sempurna! Anda telah menguasai seluruh mekanisme kontraksi otot.';
+      } else if (score >= 5) {
+        feedback.textContent = 'Pemahaman sudah baik. Tinjau kembali tahapan molekuler dan peran ATP untuk hasil maksimal.';
+      } else {
+        feedback.textContent = 'Silakan baca kembali ringkasan struktur dan mekanisme sebelum mencoba lagi.';
+      }
+
+      banner.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      document.getElementById('scoreBanner').style.display = 'none';
+      renderQuiz();
+    }
+
+    window.onload = () => {
+      updateSimulation(0);
+      renderQuiz();
+    };
+  </script>
+</body>
+</html>
